@@ -5,6 +5,7 @@ from settings import (ROWS, COLUMNS, DEAD_FIELD,
                       AUTOPLAY, FPS, FIGURE)
 from time import sleep
 from random import randrange as rr
+
 #NOTE:coordinates system>>> matrix[y][x]
 
 class Cell:
@@ -35,13 +36,11 @@ class Cell:
         if self.alive:
             if neighbors_sum in SURVIVE:
                 return True
-            return False
-        
+            
         #birth
-        if not self.alive: 
-            if neighbors_sum in BIRTH:
-                return True
-            return False   
+        elif neighbors_sum in BIRTH:
+            return True
+        return False   
                    
         
 matrix=[[Cell(x,y) for x in range(COLUMNS)]for y in range(ROWS)]
@@ -64,7 +63,16 @@ def update_matrix():
 
 
 #temporary
-            
+# matrix[ROWS//2][COLUMNS//2].alive=True
+# matrix[ROWS//2+1][COLUMNS//2-1].alive=True
+# matrix[ROWS//2+1][COLUMNS//2].alive=True
+# matrix[ROWS//2+2][COLUMNS//2].alive=True
+# matrix[ROWS//2+3][COLUMNS//2].alive=True
+# matrix[ROWS//2+4][COLUMNS//2].alive=True
+# matrix[ROWS//2+4][COLUMNS//2-1].alive=True
+
+
+
 def draw(fig:str):
     for y,_ in enumerate(fig.split('\n')):
         for x,char in enumerate(_):
@@ -73,19 +81,30 @@ def draw(fig:str):
             matrix[y][x].alive=True
              
 
-def randomize():
-    for i in range(400):
-        matrix[rr(ROWS)][rr(COLUMNS)].alive = True
+def randomize(persent: float):
+    for y in range(ROWS):
+        for x in range(COLUMNS):
+            live = True if  rr(100) < persent else False
+
+            matrix[y][x].alive = live
+        
+
+def setUp():
+    # draw(FIGURE)
+    randomize(100)
+    sleep(2)
+
 
 def main():
-    draw(FIGURE)
-    # randomize()
-    
+    setUp()
     gen=0
+
+    
     while True:
         os.system('cls')
         display()
-        print(f"{gen=}         ctrl+c to exit")
+        print(f"{gen=}         ctrl+c to exit")  
+        
         gen+=1
         update_matrix()
         
